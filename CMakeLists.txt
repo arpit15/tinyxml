@@ -14,36 +14,23 @@ add_definitions(-DTIXML_USE_STL)
 
 set( tinyxml_srcs tinyxml.cpp tinyxmlparser.cpp tinyxmlerror.cpp tinystr.cpp )
 set( tinyxml_hdrs tinyxml.h tinystr.h )
-
-find_package(catkin REQUIRED COMPONENTS rospy std_msgs)
-
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES bb_sharp_IR
-###  CATKIN_DEPENDS rospy std_msgs
-#  DEPENDS system_lib
-)
-
-include_directories(include
-    ${catkin_INCLUDE_DIRS}
-)
-
-
 ################################
 # Add targets
-set(BUILD_STATIC_LIBS ON CACHE BOOL "Set to ON to build static libraries")
+set(BUILD_STATIC_LIBS OFF CACHE BOOL "Set to ON to build static libraries")
 if(BUILD_STATIC_LIBS)
 	add_library(tinyxmlstatic STATIC ${tinyxml_srcs} ${tinyxml_hdrs} )
 	set_target_properties(tinyxmlstatic PROPERTIES OUTPUT_NAME tinyxml)
 endif(BUILD_STATIC_LIBS)
 
-add_library( tinyxml SHARED ${tinyxml_srcs} ${tinyxml_hdrs} )
-set_target_properties( tinyxml tinyxmlstatic PROPERTIES FOLDER ThirdParty/tinyxml )
+add_library( TinyXML SHARED ${tinyxml_srcs} ${tinyxml_hdrs} )
+#set_target_properties( TinyXML tinyxmlstatic PROPERTIES FOLDER ThirdParty/tinyxml )
+set_target_properties(TinyXML PROPERTIES PUBLIC_HEADER "tinyxml.h;tinystr.h")
 
+install( TARGETS TinyXML EXPORT tinyxmlTargets )
+#install( FILES ${tinyxml_hdrs} DESTINATION include )
 
-install( TARGETS tinyxml DESTINATION lib )
-install( FILES ${tinyxml_hdrs} DESTINATION include )
-
-#install(PROGRAMS scripts/GP2Y0A21YK0F.py
-#  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
+install(EXPORT tinyxmlTargets
+ FILE TinyXml.cmake
+  NAMESPACE TinyXml::
+  DESTINATION lib/cmake/TinyXml
+ )
